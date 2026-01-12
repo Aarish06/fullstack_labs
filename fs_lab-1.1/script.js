@@ -92,5 +92,27 @@ document.addEventListener("DOMContentLoaded", () => {
     ]
   }
 ];
+
+
+  const main = document.getElementById("directory");
+
+  departments.forEach(dept => {
+    const section = document.createElement("section");
+    const heading = document.createElement("h2");
+    heading.textContent = dept.name;
+
+    const list = document.createElement("ul");
+
+    dept.employees.forEach(emp => {
+      const li = document.createElement("li");
+      li.textContent = `${emp.firstName} ${emp.lastName ?? ""}`;
+      list.appendChild(li);
+    });
+
+    section.appendChild(heading);
+    section.appendChild(list);
+    main.appendChild(section);
+  });
+
   document.getElementById("year").textContent = new Date().getFullYear();
 });
