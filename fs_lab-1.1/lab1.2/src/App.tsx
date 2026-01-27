@@ -1,14 +1,14 @@
-import { Header } from "./../component/header";
-import { Footer } from "./../component/footer";
-
+import { Header } from "./component/header";
+import { Footer } from "./component/footer";
+import {Body} from "./component/body"
 
 function App() {
   return (
     <>
       <Header />
-      <main>
-      </main>
+      <Body />
       <Footer />
+      
     </>
   );
 }
