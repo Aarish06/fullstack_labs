@@ -1,6 +1,5 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState } from "react";
 
 import { Layout } from "./components/layout";
 import { EmployeeList } from "./components/employeelist";
@@ -8,12 +7,6 @@ import { EmployeeForm } from "./components/form";
 import { Organisation } from "./components/organisation";
 
 function App() {
-  const [employees, setEmployees] = useState<string[]>([]);
-
-  const addEmployee = (name: string) => {
-    setEmployees([...employees, name]);
-  };
-
   return (
     <BrowserRouter>
       <Routes>
@@ -24,8 +17,7 @@ function App() {
             path="employees"
             element={
               <>
-                <EmployeeList employees={employees} />
-                <EmployeeForm addEmployee={addEmployee} />
+                <EmployeeForm />
               </>
             }
           />

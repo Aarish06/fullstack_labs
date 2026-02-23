@@ -1,18 +1,21 @@
-type Employees = {
-  employees: string[];
-};
+import { useEffect, useState } from "react";
+import { employeeRepo } from "../repositories/employeeRepo";
+import type { Role } from "../types/role";
 
-export function EmployeeList({ employees }: Employees) {
+export function EmployeeList() {
+  const [employees, setEmployees] = useState<Role[]>([]);
+
+  useEffect(() => {
+    setEmployees(employeeRepo.getEmployees());
+  }, []);
+
   return (
-    <>
-      <h2>Employees</h2>
-
-      <ul>
-        {employees.map((emp, index) => (
-          <li key={index}>{emp}</li>
-        ))}
-      </ul>
-
-    </>
+    <ul>
+      {employees.map((emp, index) => (
+        <li key={index}>
+          {emp.name} — {emp.role}
+        </li>
+      ))}
+    </ul>
   );
 }
