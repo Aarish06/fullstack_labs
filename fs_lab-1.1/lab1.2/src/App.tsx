@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { Layout } from "./components/layout";
-import { EmployeeList } from "./components/employeelist";
+
 import { EmployeeForm } from "./components/form";
 import { Organisation } from "./components/organisation";
 
