@@ -27,5 +27,6 @@ export function useFormInput(initialValue: string) {
     onChange,
     validate,
     setError,
+    setValue,
   };
 }

@@ -6,17 +6,31 @@ interface ServiceResult {
 }
 
 class EmployeeService {
-  createEmployee(name: string): ServiceResult {
+  validateName(name: string): string | null {
     if (name.trim().length < 3) {
+      return "Name must be at least 3 characters.";
+    }
+    return null;
+  }
+
+  async createEmployee(name: string): Promise<ServiceResult> {
+    const nameError = this.validateName(name);
+    if (nameError) {
       return {
         success: false,
-        message: "Name must be at least 3 characters.",
+        message: nameError,
       };
     }
 
-    employeeRepo.createEmployee(name);
-
-    return { success: true };
+    try {
+      await employeeRepo.createEmployee(name);
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Failed to create employee",
+      };
+    }
   }
 }
 

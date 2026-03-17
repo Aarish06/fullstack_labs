@@ -1,22 +1,52 @@
 // employeeRepo.ts
-import { organisationData } from "../data/organisationData";
 import type { Role } from "../types/role";
 
-class EmployeeRepo {
-  private employees: Role[] = [...organisationData];
+const API_BASE_URL = 'http://localhost:3000/api';
 
-  getEmployees(): Role[] {
-    return [...this.employees];
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  message?: string;
+}
+
+class EmployeeRepo {
+  async getEmployees(): Promise<Role[]> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/employees`);
+      const result: ApiResponse<Role[]> = await response.json();
+      
+      if (result.success && result.data) {
+        return result.data;
+      }
+      
+      throw new Error(result.message || 'Failed to fetch employees');
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      return [];
+    }
   }
 
-  createEmployee(name: string): Role {
-    const newEmployee: Role = {
-      role: "New Employee",
-      name,
-    };
-
-    this.employees.push(newEmployee);
-    return newEmployee;
+  async createEmployee(name: string): Promise<Role> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/employees`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+      
+      const result: ApiResponse<Role> = await response.json();
+      
+      if (result.success && result.data) {
+        return result.data;
+      }
+      
+      throw new Error(result.message || 'Failed to create employee');
+    } catch (error) {
+      console.error('Error creating employee:', error);
+      throw error;
+    }
   }
 }
 
