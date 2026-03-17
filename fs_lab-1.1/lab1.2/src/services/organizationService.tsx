@@ -19,19 +19,19 @@ class OrganizationService {
     return null;
   }
 
-  validateRole(role: string): string | null {
+  async validateRole(role: string): Promise<string | null> {
     if (role.trim().length === 0) {
       return "Role is required.";
     }
 
-    if (organizationRepo.isRoleOccupied(role.trim())) {
+    if (await organizationRepo.isRoleOccupied(role.trim())) {
       return "This role is already occupied.";
     }
 
     return null;
   }
 
-  createRole(data: CreateRoleData): ServiceResult {
+  async createRole(data: CreateRoleData): Promise<ServiceResult> {
     const firstNameError = this.validateFirstName(data.firstName);
     if (firstNameError) {
       return {
@@ -40,7 +40,7 @@ class OrganizationService {
       };
     }
 
-    const roleError = this.validateRole(data.role);
+    const roleError = await this.validateRole(data.role);
     if (roleError) {
       return {
         success: false,
@@ -48,13 +48,20 @@ class OrganizationService {
       };
     }
 
-    organizationRepo.createRole(
-      data.firstName.trim(),
-      data.lastName.trim(),
-      data.role.trim()
-    );
+    try {
+      await organizationRepo.createRole(
+        data.firstName.trim(),
+        data.lastName.trim(),
+        data.role.trim()
+      );
 
-    return { success: true };
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Failed to create role",
+      };
+    }
   }
 }
 

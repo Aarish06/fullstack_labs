@@ -4,11 +4,26 @@ import { RoleForm } from "./roleForm";
 import type { Role } from "../types/role";
 
 export function Organisation() {
-  const [roles, setRoles] = useState<Role[]>(organizationRepo.getRoles());
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadRoles = async () => {
+    try {
+      setLoading(true);
+      const rolesData = await organizationRepo.getRoles();
+      setRoles(rolesData);
+    } catch (error) {
+      console.error('Error loading roles:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
+    loadRoles();
+
     const handleRoleCreated = () => {
-      setRoles(organizationRepo.getRoles());
+      loadRoles();
     };
 
     window.addEventListener('roleCreated', handleRoleCreated);
@@ -17,6 +32,10 @@ export function Organisation() {
       window.removeEventListener('roleCreated', handleRoleCreated);
     };
   }, []);
+
+  if (loading) {
+    return <div>Loading organization data...</div>;
+  }
 
   return (
     <>

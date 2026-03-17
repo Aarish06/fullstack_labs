@@ -26,6 +26,7 @@ export function useRoleForm() {
   });
 
   const [errors, setErrors] = useState<RoleFormErrors>({});
+  const [submitting, setSubmitting] = useState(false);
 
   const updateField = (field: keyof RoleFormData, value: string) => {
     setFormData(prev => ({
@@ -42,7 +43,7 @@ export function useRoleForm() {
     }
   };
 
-  const validateForm = (): boolean => {
+  const validateForm = async (): Promise<boolean> => {
     const newErrors: RoleFormErrors = {};
 
     // Validate first name
@@ -51,8 +52,8 @@ export function useRoleForm() {
       newErrors.firstName = firstNameError;
     }
 
-    // Validate role
-    const roleError = organizationService.validateRole(formData.role);
+    // Validate role (async)
+    const roleError = await organizationService.validateRole(formData.role);
     if (roleError) {
       newErrors.role = roleError;
     }
@@ -61,15 +62,23 @@ export function useRoleForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const submitForm = (): RoleFormResult => {
-    if (!validateForm()) {
-      return {
-        success: false,
-        message: "Please fix the errors before submitting.",
-      };
-    }
+  const submitForm = async (): Promise<RoleFormResult> => {
+    if (submitting) return { success: false, message: "Already submitting" };
 
-    return organizationService.createRole(formData);
+    try {
+      setSubmitting(true);
+      
+      if (!(await validateForm())) {
+        return {
+          success: false,
+          message: "Please fix the errors before submitting.",
+        };
+      }
+
+      return await organizationService.createRole(formData);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const resetForm = () => {
@@ -84,6 +93,7 @@ export function useRoleForm() {
   return {
     formData,
     errors,
+    submitting,
     updateField,
     submitForm,
     resetForm,

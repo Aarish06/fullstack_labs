@@ -1,21 +1,24 @@
 import { useRoleForm } from "../hooks/useRoleForm";
 
 export function RoleForm() {
-  const { formData, errors, updateField, submitForm, resetForm } = useRoleForm();
+  const { formData, errors, submitting, updateField, submitForm, resetForm } = useRoleForm();
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const result = submitForm();
-    
-    if (result.success) {
-      resetForm();
-      // We'll need to trigger a refresh of the organization data
-      // This will be handled by the parent component
-      window.dispatchEvent(new CustomEvent('roleCreated'));
-    } else {
-      // Error is already set in the form state
-      console.error(result.message);
+    try {
+      const result = await submitForm();
+      
+      if (result.success) {
+        resetForm();
+        // Trigger a refresh of the organization data
+        window.dispatchEvent(new CustomEvent('roleCreated'));
+      } else {
+        // Error is already set in the form state
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
     }
   }
 
@@ -33,11 +36,13 @@ export function RoleForm() {
             value={formData.firstName}
             onChange={(e) => updateField('firstName', e.target.value)}
             placeholder="Enter first name (min 3 characters)"
+            disabled={submitting}
             style={{ 
               width: '100%', 
               padding: '0.5rem',
               border: errors.firstName ? '1px solid red' : '1px solid #ccc',
-              borderRadius: '4px'
+              borderRadius: '4px',
+              opacity: submitting ? 0.6 : 1
             }}
           />
           {errors.firstName && (
@@ -57,11 +62,13 @@ export function RoleForm() {
             value={formData.lastName}
             onChange={(e) => updateField('lastName', e.target.value)}
             placeholder="Enter last name"
+            disabled={submitting}
             style={{ 
               width: '100%', 
               padding: '0.5rem',
               border: errors.lastName ? '1px solid red' : '1px solid #ccc',
-              borderRadius: '4px'
+              borderRadius: '4px',
+              opacity: submitting ? 0.6 : 1
             }}
           />
           {errors.lastName && (
@@ -81,11 +88,13 @@ export function RoleForm() {
             value={formData.role}
             onChange={(e) => updateField('role', e.target.value)}
             placeholder="Enter role title"
+            disabled={submitting}
             style={{ 
               width: '100%', 
               padding: '0.5rem',
               border: errors.role ? '1px solid red' : '1px solid #ccc',
-              borderRadius: '4px'
+              borderRadius: '4px',
+              opacity: submitting ? 0.6 : 1
             }}
           />
           {errors.role && (
@@ -97,16 +106,18 @@ export function RoleForm() {
 
         <button 
           type="submit"
+          disabled={submitting}
           style={{
             padding: '0.5rem 1rem',
-            backgroundColor: '#007bff',
+            backgroundColor: submitting ? '#6c757d' : '#007bff',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
-            cursor: 'pointer'
+            cursor: submitting ? 'not-allowed' : 'pointer',
+            opacity: submitting ? 0.7 : 1
           }}
         >
-          Add Role
+          {submitting ? 'Adding...' : 'Add Role'}
         </button>
       </form>
     </div>
