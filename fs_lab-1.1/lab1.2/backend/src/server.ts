@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import { corsMiddleware } from './middleware/cors';
 import { validateContentType, validateRequestOrigin } from './middleware/validation';
+import { authenticateUser } from './middleware/auth';
 import roleRoutes from './routes/roleRoutes';
 import employeeRoutes from './routes/employeeRoutes';
 
@@ -22,9 +23,9 @@ app.use(validateContentType);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// API routes
-app.use('/api/roles', roleRoutes);
-app.use('/api/employees', employeeRoutes);
+// API routes with authentication for POST requests
+app.use('/api/roles', authenticateUser, roleRoutes);
+app.use('/api/employees', authenticateUser, employeeRoutes);
 
 // Health check endpoint
 app.get('/health', (req: express.Request, res: express.Response) => {

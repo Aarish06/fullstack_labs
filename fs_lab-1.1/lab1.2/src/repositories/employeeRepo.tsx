@@ -28,11 +28,21 @@ class EmployeeRepo {
 
   async createEmployee(name: string): Promise<Role> {
     try {
+      // Get the current session token
+      const token = await this.getAuthToken();
+      
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      // Add auth token if available
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${API_BASE_URL}/employees`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({ name }),
       });
       
@@ -46,6 +56,17 @@ class EmployeeRepo {
     } catch (error) {
       console.error('Error creating employee:', error);
       throw error;
+    }
+  }
+
+  private async getAuthToken(): Promise<string | null> {
+    try {
+      // This is a simplified approach - in a real app you'd use Clerk's getToken method
+      const token = localStorage.getItem('clerk_session');
+      return token;
+    } catch (error) {
+      console.error('Error getting auth token:', error);
+      return null;
     }
   }
 }

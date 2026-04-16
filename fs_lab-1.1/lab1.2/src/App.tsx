@@ -15,11 +15,7 @@ function App() {
 
           <Route
             path="employees"
-            element={
-              <>
-                <EmployeeForm />
-              </>
-            }
+            element={<EmployeeForm />}
           />
 
           <Route path="organization" element={<Organisation />} />
