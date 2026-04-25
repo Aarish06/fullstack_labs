@@ -13,8 +13,14 @@ export interface CreateEmployeeRequest {
   name: string;
 }
 
-export interface ServiceResult<T = any> {
+export interface ServiceResult {
   success: boolean;
   message?: string;
-  data?: T;
+  data?: any;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }

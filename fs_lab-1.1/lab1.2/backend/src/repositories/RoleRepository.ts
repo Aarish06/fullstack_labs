@@ -63,4 +63,13 @@ export class RoleRepository {
   isRoleOccupied(role: string): boolean {
     return this.roles.some(existingRole => existingRole.role === role);
   }
+
+  deleteEmployee(id: string): boolean {
+    const index = this.employees.findIndex(emp => emp.role === id);
+    if (index !== -1) {
+      this.employees.splice(index, 1);
+      return true;
+    }
+    return false;
+  }
 }
