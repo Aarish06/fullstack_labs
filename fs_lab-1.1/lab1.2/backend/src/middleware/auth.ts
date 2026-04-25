@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import { AuthenticatedRequest } from './roleAuth';
 
-export const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
+export const authenticateUser = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   // Skip authentication for GET requests (viewing entries)
   if (req.method === 'GET') {
     return next();
@@ -26,7 +27,27 @@ export const authenticateUser = (req: Request, res: Response, next: NextFunction
     });
   }
 
-  // For now, just check if token exists and has reasonable length
-  // In production, you'd verify this token with Clerk's API
+  // Mock user data for demonstration
+  // In production, you'd verify this token with Clerk's API and get real user/role data
+  if (token.includes('admin')) {
+    req.user = {
+      id: 'admin-user-id',
+      roles: ['admin'],
+      organizationId: 'org-123'
+    };
+  } else if (token.includes('moderator')) {
+    req.user = {
+      id: 'moderator-user-id',
+      roles: ['moderator'],
+      organizationId: 'org-123'
+    };
+  } else {
+    req.user = {
+      id: 'user-id',
+      roles: ['user'],
+      organizationId: 'org-123'
+    };
+  }
+
   next();
 };

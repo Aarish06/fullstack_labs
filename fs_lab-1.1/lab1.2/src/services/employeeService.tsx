@@ -32,6 +32,18 @@ class EmployeeService {
       };
     }
   }
+
+  async deleteEmployee(id: string): Promise<ServiceResult> {
+    try {
+      await employeeRepo.deleteEmployee(id);
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Failed to delete employee",
+      };
+    }
+  }
 }
 
 export const employeeService = new EmployeeService();

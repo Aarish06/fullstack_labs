@@ -80,11 +80,39 @@ export class RoleService {
     };
   }
 
-  async getAllEmployees(): Promise<ServiceResult> {
+  async getAllEmployees(page: number = 1, limit: number = 10): Promise<ServiceResult> {
     const employees = this.roleRepository.getAllEmployees();
+    const total = employees.length;
+    const totalPages = Math.ceil(total / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedEmployees = employees.slice(startIndex, endIndex);
+    
     return {
       success: true,
-      data: employees
+      data: paginatedEmployees,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages
+      }
     };
+  }
+
+  async deleteEmployee(id: string): Promise<ServiceResult> {
+    const result = this.roleRepository.deleteEmployee(id);
+    
+    if (result) {
+      return {
+        success: true,
+        message: 'Employee deleted successfully'
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Employee not found'
+      };
+    }
   }
 }
